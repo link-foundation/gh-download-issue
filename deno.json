@@ -1,5 +1,8 @@
 {
   "nodeModulesDir": "auto",
+  "tasks": {
+    "test": "npm test"
+  },
   "test": {
     "include": ["tests/"],
     "exclude": ["examples/", "node_modules/"]

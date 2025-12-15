@@ -130,7 +130,7 @@ jobs:
 
       - name: Run tests (Bun)
         if: matrix.runtime == 'bun'
-        run: bun test
+        run: bun run test
 
       - name: Setup Deno
         if: matrix.runtime == 'deno'
@@ -138,9 +138,13 @@ jobs:
         with:
           deno-version: v2.x
 
+      - name: Install dependencies (Deno)
+        if: matrix.runtime == 'deno'
+        run: deno install
+
       - name: Run tests (Deno)
         if: matrix.runtime == 'deno'
-        run: deno test --allow-read
+        run: deno task test
 
   # Release - only runs on main after tests pass (for push events)
   release:
