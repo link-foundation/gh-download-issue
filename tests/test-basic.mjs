@@ -1,11 +1,11 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
  * Basic integration tests for gh-download-issue
  */
 
 import { execSync } from 'child_process';
-import fs from 'fs-extra';
+import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -92,8 +92,11 @@ async function testRealIssue() {
     const testOutputPath = path.join(__dirname, 'test-output.md');
 
     // Clean up any existing test output
-    if (await fs.pathExists(testOutputPath)) {
-      await fs.remove(testOutputPath);
+    try {
+      await fsPromises.access(testOutputPath);
+      await fsPromises.unlink(testOutputPath);
+    } catch (_error) {
+      // File doesn't exist, which is fine
     }
 
     // Try to download issue #1 from this repository
@@ -111,15 +114,16 @@ async function testRealIssue() {
       });
 
       // Check if file was created
-      if (await fs.pathExists(testOutputPath)) {
-        const content = await fs.readFile(testOutputPath, 'utf8');
+      try {
+        await fsPromises.access(testOutputPath);
+        const content = await fsPromises.readFile(testOutputPath, 'utf8');
         if (content.includes('# ') && content.includes('**Issue:**')) {
           pass('Real issue download works');
-          await fs.remove(testOutputPath); // Clean up
+          await fsPromises.unlink(testOutputPath); // Clean up
         } else {
           fail('Output file has invalid format');
         }
-      } else {
+      } catch (_error) {
         fail('Output file was not created');
       }
     } catch (error) {

@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
  * Test runner for gh-download-issue
@@ -18,6 +18,22 @@ const colors = {
   reset: '\x1b[0m',
 };
 
+// Detect current runtime
+function detectRuntime() {
+  // Check if Bun is available
+  if (typeof Bun !== 'undefined') {
+    return 'bun';
+  }
+  // Check if Deno is available
+  if (typeof Deno !== 'undefined') {
+    return 'deno';
+  }
+  // Default to Node.js
+  return 'node';
+}
+
+const runtime = detectRuntime();
+
 console.log(
   `${colors.blue}=====================================${colors.reset}`
 );
@@ -36,7 +52,7 @@ for (const test of tests) {
   console.log(`${colors.blue}Running ${test}...${colors.reset}`);
 
   try {
-    execSync(`bun ${testPath}`, { stdio: 'inherit' });
+    execSync(`${runtime} ${testPath}`, { stdio: 'inherit' });
     console.log(`${colors.green}✓ ${test} passed${colors.reset}\n`);
   } catch (_error) {
     console.log(`${colors.red}✗ ${test} failed${colors.reset}\n`);

@@ -207,45 +207,89 @@ function issueToMarkdown(issueData, _commentsData) {
 
 // Configure CLI arguments
 const scriptName = path.basename(process.argv[1]);
-const argv = yargs(hideBin(process.argv))
-  .scriptName(scriptName)
-  .version(version)
-  .usage('Usage: $0 <issue-url> [options]')
-  .command(
-    '$0 <issue>',
-    'Download a GitHub issue and convert it to markdown',
-    (yargs) => {
-      yargs.positional('issue', {
-        describe: 'GitHub issue URL or short format (owner/repo#123)',
-        type: 'string',
-      });
-    }
-  )
-  .option('token', {
-    alias: 't',
-    type: 'string',
-    describe: 'GitHub personal access token (optional for public issues)',
-    default: process.env.GITHUB_TOKEN,
-  })
-  .option('output', {
-    alias: 'o',
-    type: 'string',
-    describe:
-      'Output file path (default: issue-<number>.md in current directory)',
-  })
-  .help('h')
-  .alias('h', 'help')
-  .example('$0 https://github.com/owner/repo/issues/123', 'Download issue #123')
-  .example('$0 owner/repo#123', 'Download issue #123 using short format')
-  .example('$0 owner/repo#123 -o my-issue.md', 'Save to specific file')
-  .example(
-    '$0 owner/repo#123 --token ghp_xxx',
-    'Use specific GitHub token'
-  ).argv;
 
 async function main() {
+  // Check for --help or --version before yargs parsing due to use-m async loading issues
+  const args = process.argv.slice(2);
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log(`Usage: ${scriptName} <issue-url> [options]
+
+Positionals:
+  issue  GitHub issue URL or short format (owner/repo#123)              [string]
+
+Options:
+      --version  Show version number                                   [boolean]
+  -t, --token    GitHub personal access token (optional for public issues)
+                                                                         [string]
+  -o, --output   Output file path (default: issue-<number>.md in current
+                 directory)                                             [string]
+  -h, --help     Show help                                             [boolean]
+
+Examples:
+  ${scriptName} https://github.com/owner/repo/issues/123  Download issue #123
+  ${scriptName} owner/repo#123                             Download issue #123 using short format
+  ${scriptName} owner/repo#123 -o my-issue.md              Save to specific file
+  ${scriptName} owner/repo#123 --token ghp_xxx             Use specific GitHub token`);
+    process.exit(0);
+  }
+
+  if (args.includes('--version')) {
+    console.log(version);
+    process.exit(0);
+  }
+
+  // Create yargs instance with proper configuration
+  const yargsInstance = yargs(hideBin(process.argv))
+    .scriptName(scriptName)
+    .version(version)
+    .usage('Usage: $0 <issue-url> [options]')
+    .command(
+      '$0 [issue]',
+      'Download a GitHub issue and convert it to markdown',
+      (yargs) => {
+        yargs.positional('issue', {
+          describe: 'GitHub issue URL or short format (owner/repo#123)',
+          type: 'string',
+        });
+      }
+    )
+    .option('token', {
+      alias: 't',
+      type: 'string',
+      describe: 'GitHub personal access token (optional for public issues)',
+      default: process.env.GITHUB_TOKEN,
+    })
+    .option('output', {
+      alias: 'o',
+      type: 'string',
+      describe:
+        'Output file path (default: issue-<number>.md in current directory)',
+    })
+    .help(false) // Disable yargs built-in help since we handle it manually
+    .version(false) // Disable yargs built-in version since we handle it manually
+    .example(
+      '$0 https://github.com/owner/repo/issues/123',
+      'Download issue #123'
+    )
+    .example('$0 owner/repo#123', 'Download issue #123 using short format')
+    .example('$0 owner/repo#123 -o my-issue.md', 'Save to specific file')
+    .example('$0 owner/repo#123 --token ghp_xxx', 'Use specific GitHub token');
+
+  const argv = await yargsInstance.parseAsync();
+
   const { issue: issueInput, output } = argv;
   let { token } = argv;
+
+  // Check if issue URL was provided
+  if (!issueInput) {
+    log('red', '❌ No issue URL provided');
+    log(
+      'yellow',
+      '   Expected: https://github.com/owner/repo/issues/123 or owner/repo#123'
+    );
+    log('yellow', '   Run with --help for more information');
+    process.exit(1);
+  }
 
   // Parse the issue URL
   const parsed = parseIssueUrl(issueInput);
