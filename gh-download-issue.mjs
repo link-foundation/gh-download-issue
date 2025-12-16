@@ -5,70 +5,15 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Import npm dependencies
+import { Octokit } from '@octokit/rest';
+import fs from 'fs-extra';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Download use-m dynamically with Windows path fix
-const useMCode = await (await fetch('https://unpkg.com/use-m/use.js')).text();
-
-// Patch use-m to handle Windows paths and directory imports correctly in ESM
-const patchedUseMCode = useMCode.replace(
-  /const module = await import\(modulePath\);/,
-  `// Fix Windows paths and directory imports for ESM
-  let importPath = modulePath;
-
-  // Check if modulePath is a directory by trying to read package.json
-  const fs = await import('fs');
-  const pathModule = await import('path');
-  let resolvedPath = modulePath;
-
-  try {
-    // Try to read package.json if this looks like a directory path
-    const potentialPkgPath = modulePath.endsWith('.js') || modulePath.endsWith('.mjs') || modulePath.endsWith('.cjs')
-      ? null
-      : pathModule.join(modulePath, 'package.json');
-
-    if (potentialPkgPath && fs.existsSync(potentialPkgPath)) {
-      // Read package.json to find the entry point
-      const pkgData = JSON.parse(fs.readFileSync(potentialPkgPath, 'utf8'));
-      const entryPoint = pkgData.exports?.['.']?.import || pkgData.exports?.['.']?.default ||
-                         pkgData.module || pkgData.main || 'index.js';
-      resolvedPath = pathModule.join(modulePath, entryPoint);
-    }
-  } catch (e) {
-    // If we can't read package.json, try common entry points
-    const defaultEntries = ['index.js', 'index.mjs', 'index.cjs'];
-    for (const entry of defaultEntries) {
-      const tryPath = pathModule.join(modulePath, entry);
-      if (fs.existsSync(tryPath)) {
-        resolvedPath = tryPath;
-        break;
-      }
-    }
-  }
-
-  // Convert to proper file:// URL for ESM
-  if (/^[A-Za-z]:[\\\\/]/.test(resolvedPath)) {
-    // Windows path - convert backslashes to forward slashes and add file:// protocol
-    importPath = 'file:///' + resolvedPath.replace(/\\\\\\\\/g, '/').replace(/\\\\/g, '/');
-  } else if (resolvedPath.startsWith('/') && !resolvedPath.startsWith('file://')) {
-    // Unix absolute path - ensure it's a proper file:// URL
-    importPath = 'file://' + resolvedPath;
-  } else {
-    importPath = resolvedPath;
-  }
-
-  const module = await import(importPath);`
-);
-
-const { use } = eval(patchedUseMCode);
-
-// Import modern npm libraries using use-m
-const { Octokit } = await use('@octokit/rest@22.0.0');
-const fs = await use('fs-extra@11.3.0');
-const { default: yargs } = await use('yargs@17.7.2');
-const { hideBin } = await use('yargs@17.7.2/helpers');
 
 // Get version from package.json or fallback
 let version = '0.1.0'; // Fallback version
@@ -259,7 +204,7 @@ function issueToMarkdown(issueData, _commentsData) {
 const scriptName = path.basename(process.argv[1]);
 
 async function main() {
-  // Check for --help or --version before yargs parsing due to use-m async loading issues
+  // Check for --help or --version before yargs parsing for faster response
   const args = process.argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`Usage: ${scriptName} <issue-url> [options]
