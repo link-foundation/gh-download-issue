@@ -20,6 +20,7 @@ export default [
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
+        URL: 'readonly',
         // Node.js 18+ globals
         fetch: 'readonly',
         // Runtime-specific globals
@@ -66,7 +67,7 @@ export default [
   },
   {
     // Test files have different requirements
-    files: ['tests/**/*.js', '**/*.test.js'],
+    files: ['tests/**/*.js', 'tests/**/*.mjs', '**/*.test.js', '**/*.test.mjs'],
     rules: {
       'require-await': 'off', // Async functions without await are common in tests
     },

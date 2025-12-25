@@ -43,7 +43,7 @@ console.log(
 );
 
 // List of test files to run
-const tests = ['test-basic.mjs'];
+const tests = ['test-basic.mjs', 'test-image-extraction.mjs'];
 
 let failed = false;
 
