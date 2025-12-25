@@ -2,15 +2,18 @@
 
 [![npm version](https://img.shields.io/npm/v/gh-download-issue)](https://www.npmjs.com/package/gh-download-issue)
 
-A CLI tool to download GitHub issues and convert them to markdown - perfect for AI processing and offline analysis.
+A CLI tool to download GitHub issues and convert them to markdown - perfect for AI processing and offline analysis. Automatically downloads embedded images to prevent "Could not process image" errors when using with Claude Code CLI.
 
 ## Features
 
 - 📥 **Download Issues**: Fetch complete GitHub issues with all comments
+- 📷 **Image Downloading**: Automatically download and validate embedded images
 - 📝 **Markdown Export**: Convert issues to well-formatted markdown files
+- 📊 **JSON Export**: Export structured data for programmatic use
 - 🔐 **Smart Authentication**: Automatic GitHub CLI integration or token support
 - ⚡ **Simple CLI**: Easy-to-use command-line interface
 - 🎯 **Flexible Input**: Support for full URLs or short format (owner/repo#123)
+- ✅ **Image Validation**: Validates downloaded images by checking magic bytes
 
 ## Quick Start
 
@@ -23,6 +26,12 @@ gh-download-issue owner/repo#123
 
 # Save to specific file
 gh-download-issue owner/repo#123 -o my-issue.md
+
+# Export as JSON
+gh-download-issue owner/repo#123 --format json
+
+# Skip image downloading
+gh-download-issue owner/repo#123 --no-download-images
 
 # Use specific GitHub token
 gh-download-issue owner/repo#123 --token ghp_xxx
@@ -77,10 +86,41 @@ chmod +x gh-download-issue.mjs
 Usage: gh-download-issue <issue-url> [options]
 
 Options:
-  -t, --token   GitHub personal access token (optional for public issues)
-  -o, --output  Output file path (default: issue-<number>.md in current directory)
-  -h, --help    Show help
-  -v, --version Show version
+      --version          Show version number
+  -t, --token            GitHub personal access token (optional for public issues)
+  -o, --output           Output directory or file path (default: current directory)
+      --download-images  Download embedded images (default: true)
+  -f, --format           Output format: markdown, json (default: markdown)
+  -v, --verbose          Enable verbose logging
+  -h, --help             Show help
+```
+
+## Image Handling
+
+The tool automatically downloads and validates all images found in issues:
+
+### Supported Image Formats
+
+- PNG, JPEG, GIF, WebP
+- BMP, ICO, SVG
+
+### Image Features
+
+- **Automatic Download**: Images in both markdown (`![alt](url)`) and HTML (`<img src>`) syntax are detected
+- **Magic Bytes Validation**: Images are validated by content, not just file extension
+- **GitHub Authentication**: Uses your GitHub token for private repository images
+- **Redirect Handling**: Properly follows S3 signed URLs and other redirects
+- **Error Handling**: Gracefully handles missing/expired URLs with warnings
+- **Local References**: Markdown is updated to reference downloaded images
+
+### Output Structure
+
+```
+issue-123.md              # Issue body and comments in markdown
+issue-123-images/         # Directory with downloaded images
+  image-1.png
+  image-2.jpg
+issue-123.json            # Optional JSON export (with --format json)
 ```
 
 ## Authentication
@@ -140,17 +180,28 @@ gh-download-issue myorg/private-repo#456
 # Save to specific location
 gh-download-issue owner/repo#789 --output ./issues/issue-789.md
 
+# Export as JSON for programmatic use
+gh-download-issue owner/repo#123 --format json
+
+# Verbose mode for debugging
+gh-download-issue owner/repo#123 --verbose
+
+# Skip image download (faster, text only)
+gh-download-issue owner/repo#123 --no-download-images
+
 # Use explicit token
 gh-download-issue owner/repo#123 --token ghp_your_token_here
 ```
 
 ## Output Format
 
+### Markdown Output
+
 The generated markdown file includes:
 
 - **Issue Title** - As the main heading
 - **Metadata** - Issue number, author, state, dates, labels, assignees, milestone
-- **Description** - The issue body content
+- **Description** - The issue body content with local image references
 - **Comments** - All comments with author and timestamp
 
 Example output structure:
@@ -169,7 +220,9 @@ Example output structure:
 
 ## Description
 
-[Issue body content here]
+[Issue body content with local image references]
+
+![screenshot](issue-123-images/image-1.png)
 
 ---
 
@@ -190,9 +243,18 @@ _Posted on 1/2/2025, 3:30:00 PM_
 [Comment content here]
 ```
 
+### JSON Output
+
+The JSON format includes:
+
+- Full issue data (title, body, state, labels, etc.)
+- All comments with metadata
+- Image download results (downloaded, failed, skipped)
+- Download metadata (timestamp, tool version)
+
 ## Requirements
 
-- [Bun](https://bun.sh/) (>=1.2.0) or [Node.js](https://nodejs.org/) (>=22.17.0) runtime
+- [Bun](https://bun.sh/) (>=1.2.0) or [Node.js](https://nodejs.org/) (>=20.0.0) runtime
 - For private issues (optional):
   - [GitHub CLI](https://cli.github.com/) (recommended) OR
   - GitHub personal access token (via `--token` or `GITHUB_TOKEN` env var)
@@ -203,16 +265,17 @@ The project includes a test suite:
 
 ```bash
 # Run all tests
+npm test
+
+# Or run directly
 cd tests
 ./test-all.mjs
-
-# Run specific test
-./test-basic.mjs
 ```
 
 ## Use Cases
 
-- **AI Processing**: Download issues for AI analysis and automated problem-solving
+- **AI Processing**: Download issues with images for AI analysis without "Could not process image" errors
+- **Claude Code CLI**: Perfect companion for using issues with Claude Code
 - **Offline Access**: Keep local copies of important issues for reference
 - **Documentation**: Export issues as markdown for documentation purposes
 - **Backup**: Archive issues before repository changes or migrations

@@ -20,6 +20,7 @@ export default [
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
+        URL: 'readonly',
         // Node.js 18+ globals
         fetch: 'readonly',
         // Runtime-specific globals
@@ -62,13 +63,27 @@ export default [
 
       // Comments and documentation
       'spaced-comment': ['error', 'always', { markers: ['/'] }],
+
+      // Complexity rules (matching template best practices)
+      complexity: ['warn', 15],
+      'max-lines-per-function': [
+        'warn',
+        { max: 150, skipBlankLines: true, skipComments: true },
+      ],
+      'max-params': ['warn', 6],
+      'max-statements': ['warn', 60],
+      'max-lines': [
+        'warn',
+        { max: 1500, skipBlankLines: true, skipComments: true },
+      ],
     },
   },
   {
     // Test files have different requirements
-    files: ['tests/**/*.js', '**/*.test.js'],
+    files: ['tests/**/*.js', 'tests/**/*.mjs', '**/*.test.js', '**/*.test.mjs'],
     rules: {
       'require-await': 'off', // Async functions without await are common in tests
+      'max-lines-per-function': 'off', // Test suites often have many tests in one describe block
     },
   },
   {
@@ -76,6 +91,7 @@ export default [
       'node_modules/**',
       'coverage/**',
       'dist/**',
+      'report/**',
       '*.min.js',
       '.eslintcache',
     ],
