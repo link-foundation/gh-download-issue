@@ -1,5 +1,5 @@
 {
-  "name": "gh-download-issue",
+  "name": "gh-load-issue",
   "version": "0.3.0",
   "description": "A CLI tool to download GitHub issues and convert them to markdown",
   "type": "module",
