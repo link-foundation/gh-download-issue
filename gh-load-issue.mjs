@@ -260,7 +260,7 @@ function downloadImage(url, token, maxRedirects = 5) {
     const protocol = parsedUrl.protocol === 'https:' ? https : http;
 
     const headers = {
-      'User-Agent': 'gh-download-issue',
+      'User-Agent': 'gh-load-issue',
       Accept: 'image/*,*/*',
     };
 

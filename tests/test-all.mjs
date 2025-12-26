@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Test runner for gh-download-issue
+ * Test runner for gh-load-issue
  *
  * This file imports all test suites and runs them using test-anywhere.
  * Each runtime (Node.js, Bun, Deno) will execute tests using its native test runner.

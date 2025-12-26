@@ -1,6 +1,6 @@
-# gh-download-issue
+# gh-load-issue
 
-[![npm version](https://img.shields.io/npm/v/gh-download-issue)](https://www.npmjs.com/package/gh-download-issue)
+[![npm version](https://img.shields.io/npm/v/gh-load-issue)](https://www.npmjs.com/package/gh-load-issue)
 
 A CLI tool to download GitHub issues and convert them to markdown - perfect for AI processing and offline analysis. Automatically downloads embedded images to prevent "Could not process image" errors when using with Claude Code CLI.
 
@@ -19,22 +19,22 @@ A CLI tool to download GitHub issues and convert them to markdown - perfect for 
 
 ```bash
 # Download issue using full URL
-gh-download-issue https://github.com/owner/repo/issues/123
+gh-load-issue https://github.com/owner/repo/issues/123
 
 # Download issue using short format
-gh-download-issue owner/repo#123
+gh-load-issue owner/repo#123
 
 # Save to specific file
-gh-download-issue owner/repo#123 -o my-issue.md
+gh-load-issue owner/repo#123 -o my-issue.md
 
 # Export as JSON
-gh-download-issue owner/repo#123 --format json
+gh-load-issue owner/repo#123 --format json
 
 # Skip image downloading
-gh-download-issue owner/repo#123 --no-download-images
+gh-load-issue owner/repo#123 --no-download-images
 
 # Use specific GitHub token
-gh-download-issue owner/repo#123 --token ghp_xxx
+gh-load-issue owner/repo#123 --token ghp_xxx
 ```
 
 ## Installation
@@ -45,13 +45,13 @@ Install globally for system-wide access:
 
 ```bash
 # Using bun
-bun install -g gh-download-issue
+bun install -g gh-load-issue
 
 # Using npm
-npm install -g gh-download-issue
+npm install -g gh-load-issue
 
 # After installation, use anywhere:
-gh-download-issue --help
+gh-load-issue --help
 ```
 
 ### Uninstall
@@ -60,30 +60,30 @@ Remove the global installation:
 
 ```bash
 # Using bun
-bun uninstall -g gh-download-issue
+bun uninstall -g gh-load-issue
 
 # Using npm
-npm uninstall -g gh-download-issue
+npm uninstall -g gh-load-issue
 ```
 
 ### Local Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/link-foundation/gh-download-issue.git
-cd gh-download-issue
+git clone https://github.com/link-foundation/gh-load-issue.git
+cd gh-load-issue
 
 # Make the script executable
-chmod +x gh-download-issue.mjs
+chmod +x gh-load-issue.mjs
 
 # Run it
-./gh-download-issue.mjs --help
+./gh-load-issue.mjs --help
 ```
 
 ## Usage
 
 ```
-Usage: gh-download-issue <issue-url> [options]
+Usage: gh-load-issue <issue-url> [options]
 
 Options:
       --version          Show version number
@@ -136,7 +136,7 @@ If you have [GitHub CLI](https://cli.github.com/) installed and authenticated, t
 gh auth login
 
 # Script automatically detects and uses gh CLI authentication
-gh-download-issue owner/repo#123  # Works with private issues!
+gh-load-issue owner/repo#123  # Works with private issues!
 ```
 
 ### 2. Environment Variable
@@ -145,7 +145,7 @@ Set the `GITHUB_TOKEN` environment variable:
 
 ```bash
 export GITHUB_TOKEN=ghp_your_token_here
-gh-download-issue owner/repo#123
+gh-load-issue owner/repo#123
 ```
 
 ### 3. Command Line Token
@@ -153,7 +153,7 @@ gh-download-issue owner/repo#123
 Pass the token directly with `--token`:
 
 ```bash
-gh-download-issue owner/repo#123 --token ghp_your_token_here
+gh-load-issue owner/repo#123 --token ghp_your_token_here
 ```
 
 ### Authentication Priority
@@ -169,28 +169,28 @@ The script uses this fallback chain:
 
 ```bash
 # Basic usage - download a public issue
-gh-download-issue https://github.com/torvalds/linux/issues/123
+gh-load-issue https://github.com/torvalds/linux/issues/123
 
 # Use short format
-gh-download-issue torvalds/linux#123
+gh-load-issue torvalds/linux#123
 
 # Download private issue (using GitHub CLI auth)
-gh-download-issue myorg/private-repo#456
+gh-load-issue myorg/private-repo#456
 
 # Save to specific location
-gh-download-issue owner/repo#789 --output ./issues/issue-789.md
+gh-load-issue owner/repo#789 --output ./issues/issue-789.md
 
 # Export as JSON for programmatic use
-gh-download-issue owner/repo#123 --format json
+gh-load-issue owner/repo#123 --format json
 
 # Verbose mode for debugging
-gh-download-issue owner/repo#123 --verbose
+gh-load-issue owner/repo#123 --verbose
 
 # Skip image download (faster, text only)
-gh-download-issue owner/repo#123 --no-download-images
+gh-load-issue owner/repo#123 --no-download-images
 
 # Use explicit token
-gh-download-issue owner/repo#123 --token ghp_your_token_here
+gh-load-issue owner/repo#123 --token ghp_your_token_here
 ```
 
 ## Output Format
