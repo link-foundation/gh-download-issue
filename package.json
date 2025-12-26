@@ -3,9 +3,9 @@
   "version": "0.3.0",
   "description": "A CLI tool to download GitHub issues and convert them to markdown",
   "type": "module",
-  "main": "gh-download-issue.mjs",
+  "main": "gh-load-issue.mjs",
   "bin": {
-    "gh-download-issue": "./gh-download-issue.mjs"
+    "gh-load-issue": "./gh-load-issue.mjs"
   },
   "scripts": {
     "test": "node --test tests/test-all.mjs",
@@ -63,14 +63,14 @@
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/link-foundation/gh-download-issue.git"
+    "url": "git+https://github.com/link-foundation/gh-load-issue.git"
   },
   "bugs": {
-    "url": "https://github.com/link-foundation/gh-download-issue/issues"
+    "url": "https://github.com/link-foundation/gh-load-issue/issues"
   },
-  "homepage": "https://github.com/link-foundation/gh-download-issue#readme",
+  "homepage": "https://github.com/link-foundation/gh-load-issue#readme",
   "files": [
-    "gh-download-issue.mjs",
+    "gh-load-issue.mjs",
     "README.md",
     "LICENSE"
   ]

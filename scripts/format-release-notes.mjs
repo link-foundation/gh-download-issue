@@ -24,7 +24,7 @@
  */
 
 // TODO: Update this to match your package name in package.json
-const PACKAGE_NAME = 'gh-download-issue';
+const PACKAGE_NAME = 'gh-load-issue';
 
 // Load use-m dynamically
 const { use } = eval(

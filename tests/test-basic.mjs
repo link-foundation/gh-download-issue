@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Basic integration tests for gh-download-issue
+ * Basic integration tests for gh-load-issue
  */
 
 import { describe, it, expect, afterEach } from 'test-anywhere';
@@ -12,9 +12,9 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scriptPath = path.join(__dirname, '..', 'gh-download-issue.mjs');
+const scriptPath = path.join(__dirname, '..', 'gh-load-issue.mjs');
 
-describe('gh-download-issue CLI', () => {
+describe('gh-load-issue CLI', () => {
   describe('Script accessibility', () => {
     it('should exist and be accessible', () => {
       const stats = fs.statSync(scriptPath);
@@ -69,7 +69,7 @@ describe('gh-download-issue CLI', () => {
 
     it('should download a real issue when authenticated', async () => {
       const issueUrl =
-        'https://github.com/link-foundation/gh-download-issue/issues/1';
+        'https://github.com/link-foundation/gh-load-issue/issues/1';
 
       try {
         execSync(`node ${scriptPath} ${issueUrl} -o ${testOutputPath}`, {

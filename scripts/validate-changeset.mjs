@@ -10,7 +10,7 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 // TODO: Update this to match your package name in package.json
-const PACKAGE_NAME = 'gh-download-issue';
+const PACKAGE_NAME = 'gh-load-issue';
 
 try {
   // Count changeset files (excluding README.md and config.json)
