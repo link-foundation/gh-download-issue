@@ -1,14 +1,23 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 /**
  * Basic integration tests for gh-load-issue
  */
 
-import { describe, it, expect, afterEach } from 'test-anywhere';
+import {
+  describe,
+  it,
+  expect,
+  afterEach,
+  setDefaultTimeout,
+} from 'test-anywhere';
 import { execSync } from 'child_process';
 import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// Set timeout to 30 seconds for real issue download tests (Windows can be slow)
+setDefaultTimeout(30000);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,7 +46,7 @@ describe('gh-load-issue CLI', () => {
 
   describe('Help command', () => {
     it('should display help information', () => {
-      const output = execSync(`node ${scriptPath} --help`, {
+      const output = execSync(`bun ${scriptPath} --help`, {
         encoding: 'utf8',
       });
       expect(output).toContain('--help');
@@ -47,7 +56,7 @@ describe('gh-load-issue CLI', () => {
 
   describe('Version command', () => {
     it('should display version number', () => {
-      const output = execSync(`node ${scriptPath} --version`, {
+      const output = execSync(`bun ${scriptPath} --version`, {
         encoding: 'utf8',
       });
       expect(output).toMatch(/\d+\.\d+\.\d+/);
@@ -72,7 +81,7 @@ describe('gh-load-issue CLI', () => {
         'https://github.com/link-foundation/gh-load-issue/issues/1';
 
       try {
-        execSync(`node ${scriptPath} ${issueUrl} -o ${testOutputPath}`, {
+        execSync(`bun ${scriptPath} ${issueUrl} -o ${testOutputPath}`, {
           encoding: 'utf8',
           stdio: 'pipe',
         });
