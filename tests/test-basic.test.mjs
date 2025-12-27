@@ -4,11 +4,20 @@
  * Basic integration tests for gh-load-issue
  */
 
-import { describe, it, expect, afterEach } from 'test-anywhere';
+import {
+  describe,
+  it,
+  expect,
+  afterEach,
+  setDefaultTimeout,
+} from 'test-anywhere';
 import { execSync } from 'child_process';
 import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// Set timeout to 30 seconds for real issue download tests (Windows can be slow)
+setDefaultTimeout(30000);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
